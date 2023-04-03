@@ -1,5 +1,6 @@
 library(tidyr)
 library(dplyr)
+library(ggplot2)
 
 vc <- read.csv("datos_vc.csv", header = TRUE, sep = ",") %>%
         pivot_longer(cols = -c(Tiempo), values_to = "concentraciones", names_to = "paciente") %>%
@@ -16,22 +17,7 @@ dfo <- read.csv("datos_dfo.csv", header = TRUE, sep = ",") %>%
             mutate(px = strtrim(paciente, 3)) %>%
                 mutate(sample = substring(paciente, 5, 5))
 dfo
-library(ggplot2)
-ggplot()+
-    stat_summary(data = vc, aes(x = Tiempo, y = concentraciones), fun = "mean", geom = "line", size = 0.5) +
-    geom_point(data = vc, aes(x = Tiempo, y = concentraciones, colour = sample), alpha = 0.3, size = 2) +
-    facet_wrap(vars(px)) +
-    theme_bw()
-ggplot()+
-    stat_summary(data = nac, aes(x = Tiempo, y = concentraciones), fun = "mean", geom = "line", size = 0.5) +
-    geom_point(data = nac, aes(x = Tiempo, y = concentraciones, colour = sample), alpha = 0.3, size = 2) +
-    facet_wrap(vars(px)) +
-    theme_bw()
-ggplot()+
-    stat_summary(data = dfo, aes(x = Tiempo, y = concentraciones), fun = "mean", geom = "line", size = 0.5) +
-    geom_point(data = dfo, aes(x = Tiempo, y = concentraciones, colour = sample), alpha = 0.3, size = 2) +
-    facet_wrap(vars(px)) +
-    theme_bw()
+
 
 vc_fco <- vc %>%
     mutate(fco = "vc")
