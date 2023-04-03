@@ -48,3 +48,45 @@ ggplot() +
     theme_bw()
 ggsave("todas_muestras_vc_nac_dfo.pdf", width = 70, height = 20, units = "cm")
  
+
+
+# resumiendo datos
+
+mean_asc <- asc %>%
+    group_by(Tiempo, px) %>%
+        summarise(c_promedio = mean(concentraciones, na.rm = TRUE))
+ggplot()+
+    geom_line(data = mean_asc, aes(x = Tiempo, y = c_promedio, colour = px)) +
+    scale_x_continuous(breaks = seq(0, 180, 60),
+                        minor_breaks = seq(0, 180, 15)) +
+    theme_bw()
+
+mean_nac <- nac %>%
+    group_by(Tiempo, px) %>%
+        summarise(c_promedio = mean(concentraciones, na.rm = TRUE))
+ggplot()+
+    geom_line(data = mean_nac, aes(x = Tiempo, y = c_promedio, colour = px)) +
+    scale_x_continuous(breaks = seq(0, 180, 60),
+                        minor_breaks = seq(0, 180, 15)) +
+    theme_bw()
+
+mean_dfo <- dfo %>%
+    group_by(Tiempo, px) %>%
+        summarise(c_promedio = mean(concentraciones, na.rm = TRUE))  
+ggplot()+   
+    geom_line(data = mean_dfo, aes(x = Tiempo, y = c_promedio, colour = px)) +
+    scale_x_continuous(breaks = seq(0, 180, 60),
+                        minor_breaks = seq(0, 180, 15)) +
+    theme_bw()
+
+covariables <- read.csv("covariables.csv", header = TRUE, sep = ",")
+
+asc_covariables <- mean_asc %>%
+    left_join(covariables, by = "px")
+nac_covariables <- mean_nac %>%
+    left_join(covariables, by = "px")
+dfo_covariables <- mean_dfo %>%
+    left_join(covariables, by = "px")
+write.csv(asc_covariables, "covariables_asc.csv", row.names = FALSE)
+write.csv(nac_covariables, "covariables_nac.csv", row.names = FALSE)
+write.csv(dfo_covariables, "covariables_dfo.csv", row.names = FALSE)
