@@ -36,15 +36,8 @@ shapiro_pvalue_asc_tac1 <- tibble(tiempos = c(15, 30, 60, 90, 120), pvalue_asc =
 shapiro_pvalue_dfo_tac1 <- tibble(tiempos = c(15, 30, 60, 90, 120), pvalue_dfo = c())
 shapiro_pvalue_nac_tac1 <- tibble(tiempos = c(15, 30, 60, 90, 120), pvalue_nac = c())
 
-# for (i in c(0, 15, 30, 60, 90, 120, 180)) {
-#     shapiro_pvalue_asc_tac1$pvalue_asc[shapiro_pvalue_asc_tac1$tiempos == i] <- ifelse(is.na(shapiro.test(asc_tac1$c_promedio[asc_tac1$Tiempo == i])$p.value), "no aplica", shapiro.test(na.omit(asc_tac1$c_promedio[asc_tac1$Tiempo == i]))$p.value)
-#     shapiro_pvalue_dfo_tac1$pvalue_dfo[shapiro_pvalue_dfo_tac1$tiempos == i] <- ifelse(is.na(shapiro.test(dfo_tac1$c_promedio[dfo_tac1$Tiempo == i])$p.value), "no aplica", shapiro.test(na.omit(dfo_tac1$c_promedio[dfo_tac1$Tiempo == i]))$p.value)
-#     shapiro_pvalue_nac_tac1$pvalue_nac[shapiro_pvalue_nac_tac1$tiempos == i] <- ifelse(is.na(shapiro.test(nac_tac1$c_promedio[nac_tac1$Tiempo == i])$p.value), "no aplica", shapiro.test(na.omit(nac_tac1$c_promedio[nac_tac1$Tiempo == i]))$p.value)    
-#     #shapiro_pvalue_dfo_tac1$pvalue_dfo[shapiro_pvalue_dfo_tac1$tiempos == i] <- shapiro.test(na.omit(dfo$c_promedio[dfo$Tiempo == i & dfo$tac == "tac1"]))$p.value
-#     #shapiro_pvalue_nac_tac1$pvalue_nac[shapiro_pvalue_nac_tac1$tiempos == i] <- shapiro.test(na.omit(nac$c_promedio[nac$Tiempo == i & nac$tac == "tac1"]))$p.value
-# 
-# }
-for (i in c(15, 30, 60, 90, 120, 180)) {
+
+for (i in c(15, 30, 60, 90, 120)) {
   if (sum(!is.na(asc_tac1$c_promedio[asc_tac1$Tiempo == i])) >= 3) {
     shapiro_pvalue_asc_tac1$pvalue_asc[shapiro_pvalue_asc_tac1$tiempos == i] <- shapiro.test(na.omit(asc_tac1$c_promedio[asc_tac1$Tiempo == i]))$p.value
   }
@@ -71,6 +64,8 @@ todos_tac1
 #reorder the columns
 todos_tac1 <- todos_tac1[, c(1, 2, 5, 3, 6, 4, 7)]
 todos_tac1
+# transfer data to .csv file in output/normalidad folder
+write.csv(todos_tac1, file = "output/normalidad/todos_tac1.csv", row.names = FALSE)
 
 #shapiro wilk test for tac2
 (asc_tac2 <- asc[asc$tac == "tac2" & is.na(asc$c_promedio) == FALSE, ])
@@ -80,7 +75,7 @@ shapiro_pvalue_asc_tac2 <- tibble(tiempos = c(15, 30, 60, 90, 120), pvalue_asc =
 shapiro_pvalue_dfo_tac2 <- tibble(tiempos = c(15, 30, 60, 90, 120), pvalue_dfo = c())
 shapiro_pvalue_nac_tac2 <- tibble(tiempos = c(15, 30, 60, 90, 120), pvalue_nac = c())
 
-for (i in c(15, 30, 60, 90, 120, 180)) {
+for (i in c(15, 30, 60, 90, 120)) {
   if (sum(!is.na(asc_tac2$c_promedio[asc_tac2$Tiempo == i])) >= 3) {
     shapiro_pvalue_asc_tac2$pvalue_asc[shapiro_pvalue_asc_tac2$tiempos == i] <- shapiro.test(na.omit(asc_tac2$c_promedio[asc_tac2$Tiempo == i]))$p.value
   }
@@ -107,10 +102,12 @@ todos_tac2
 #reorder the columns
 todos_tac2 <- todos_tac2[, c(1, 2, 5, 3, 6, 4, 7)]
 todos_tac2
+# transfer data to .csv file in output/normalidad folder
+write.csv(todos_tac2, file = "output/normalidad/todos_tac2.csv", row.names = FALSE)
 
 #qqplot for tac1 at each time point
 # save all the plots in one pdf file
-pdf("qqplots_tac1_tac2.pdf")
+pdf("output/normalidad/qqplot_tac1_tac2.pdf")
 #asc
 asc_tac1_qqplot <- asc[asc$tac == "tac1" & is.na(asc$c_promedio) == FALSE, ]
 asc_tac1_qqplot <- as.data.frame(asc_tac1_qqplot[order(asc_tac1_qqplot$Tiempo), ])
