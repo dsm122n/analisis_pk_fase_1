@@ -1,6 +1,7 @@
 # Output
 
 Aquí los archivos .csv tienen los datos de concentraciones ordenados, con columnas para tiempo, paciente, concentración, asignación de TAC y covariables
+
 Los archívos .pdf tienen gráficos concentración-tiempo para cada individuo con linea promedio y mediciones individuales para evaluar si hay datos que se vean extraños y se deban borrar
 
 ## normalidad
