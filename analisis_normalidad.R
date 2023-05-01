@@ -1,7 +1,11 @@
 library(tibble)
+
+#import data
 asc <- tibble(read.csv("output/covariables_asc.csv"))
 dfo <- tibble(read.csv("output/covariables_dfo.csv"))
 nac <- tibble(read.csv("output/covariables_nac.csv"))
+
+#shapiro wilk test for normality for each time TAC1 and TAC2 together
 shapiro_pvalue_asc <- tibble(tiempos = c(15, 30, 60, 90, 120, 180), pvalue_asc = c())
 shapiro_pvalue_dfo <- tibble(tiempos = c(15, 30, 60, 90, 120, 180), pvalue_dfo = c())
 shapiro_pvalue_nac <- tibble(tiempos = c(15, 30, 60, 90, 120, 180), pvalue_nac = c())
@@ -211,3 +215,122 @@ qqline(nac_tac2_qqplot_tiempo)
 
 
 dev.off()
+
+
+#shapiro test with standarized c_promedio over time
+#tac1
+#asc
+asc_tac1_shapiro <- asc[asc$tac == "tac1" & is.na(asc$c_promedio) == FALSE, ]
+asc_tac1_shapiro <- as.data.frame(asc_tac1_shapiro[order(asc_tac1_shapiro$Tiempo), ])
+#Vector containing all standarized c_promedio values
+asc_tac1_shapiro_tiempo <- c()
+for (i in c(
+  0, 15, 30, 60, 90, 120, 180
+  )) {
+    asc_vector <- asc_tac1_shapiro$c_promedio[asc_tac1_shapiro$Tiempo == i]
+    asc_tac1_shapiro_tiempo <- c(asc_tac1_shapiro_tiempo, scale(asc_vector))
+  
+}
+#density plot
+plot(density(asc_tac1_shapiro_tiempo), main = "asc_tac1_shapiro")
+#print shapiro test in previous plot as text
+p_value <- shapiro.test(asc_tac1_shapiro_tiempo)$p.value
+text(0.5, 10, paste("p-value =", round(p_value, 4)), cex = 1.2)
+#histogram
+hist(asc_tac1_shapiro_tiempo, main = "asc_tac1_shapiro")
+shapiro.test(asc_tac1_shapiro_tiempo)
+
+#dfo
+dfo_tac1_shapiro <- dfo[dfo$tac == "tac1" & is.na(dfo$c_promedio) == FALSE, ]
+dfo_tac1_shapiro <- as.data.frame(dfo_tac1_shapiro[order(dfo_tac1_shapiro$Tiempo), ])
+#Vector containing all standarized c_promedio values
+dfo_tac1_shapiro_tiempo <- c()
+for (i in c(
+  15, 30, 60, 90, 120
+  )) {
+    dfo_vector <- dfo_tac1_shapiro$c_promedio[dfo_tac1_shapiro$Tiempo == i]
+    dfo_tac1_shapiro_tiempo <- c(dfo_tac1_shapiro_tiempo, scale(dfo_vector))
+  
+}
+#density plot
+plot(density(dfo_tac1_shapiro_tiempo), main = "dfo_tac1_shapiro")
+#histogram
+hist(dfo_tac1_shapiro_tiempo, main = "dfo_tac1_shapiro")
+shapiro.test(dfo_tac1_shapiro_tiempo)
+
+#nac
+nac_tac1_shapiro <- nac[nac$tac == "tac1" & is.na(nac$c_promedio) == FALSE, ]
+nac_tac1_shapiro <- as.data.frame(nac_tac1_shapiro[order(nac_tac1_shapiro$Tiempo), ])
+#Vector containing all standarized c_promedio values
+nac_tac1_shapiro_tiempo <- c()
+for (i in c(
+  15, 30, 60, 90, 120
+  )) {
+    nac_vector <- nac_tac1_shapiro$c_promedio[nac_tac1_shapiro$Tiempo == i]
+    nac_tac1_shapiro_tiempo <- c(nac_tac1_shapiro_tiempo, scale(nac_vector))
+  
+}
+#density plot
+plot(density(nac_tac1_shapiro_tiempo), main = "nac_tac1_shapiro")
+#histogram
+hist(nac_tac1_shapiro_tiempo, main = "nac_tac1_shapiro")
+#shapiro test
+shapiro.test(nac_tac1_shapiro_tiempo)
+
+
+#tac2
+#asc
+asc_tac2_shapiro <- asc[asc$tac == "tac2" & is.na(asc$c_promedio) == FALSE, ]
+asc_tac2_shapiro <- as.data.frame(asc_tac2_shapiro[order(asc_tac2_shapiro$Tiempo), ])
+#Vector containing all standarized c_promedio values
+asc_tac2_shapiro_tiempo <- c()
+for (i in c(
+  0, 15, 30, 60, 90, 120, 180
+  )) {
+    asc_vector <- asc_tac2_shapiro$c_promedio[asc_tac2_shapiro$Tiempo == i]
+    asc_tac2_shapiro_tiempo <- c(asc_tac2_shapiro_tiempo, scale(asc_vector))
+  
+}
+#density plot
+plot(density(asc_tac2_shapiro_tiempo), main = "asc_tac2_shapiro")
+#histogram
+hist(asc_tac2_shapiro_tiempo, main = "asc_tac2_shapiro")
+shapiro.test(asc_tac2_shapiro_tiempo)
+
+#dfo
+dfo_tac2_shapiro <- dfo[dfo$tac == "tac2" & is.na(dfo$c_promedio) == FALSE, ]
+dfo_tac2_shapiro <- as.data.frame(dfo_tac2_shapiro[order(dfo_tac2_shapiro$Tiempo), ])
+#Vector containing all standarized c_promedio values
+dfo_tac2_shapiro_tiempo <- c()
+for (i in c(
+  15, 30, 60, 90, 120
+  )) {
+    dfo_vector <- dfo_tac2_shapiro$c_promedio[dfo_tac2_shapiro$Tiempo == i]
+    dfo_tac2_shapiro_tiempo <- c(dfo_tac2_shapiro_tiempo, scale(dfo_vector))
+  
+}
+#density plot
+plot(density(dfo_tac2_shapiro_tiempo), main = "dfo_tac2_shapiro")
+#histogram
+hist(dfo_tac2_shapiro_tiempo, main = "dfo_tac2_shapiro")
+shapiro.test(dfo_tac2_shapiro_tiempo)
+
+#nac
+nac_tac2_shapiro <- nac[nac$tac == "tac2" & is.na(nac$c_promedio) == FALSE, ]
+nac_tac2_shapiro <- as.data.frame(nac_tac2_shapiro[order(nac_tac2_shapiro$Tiempo), ])
+#Vector containing all standarized c_promedio values
+nac_tac2_shapiro_tiempo <- c()
+for (i in c(
+  15, 30, 60, 90, 120
+  )) {
+    nac_vector <- nac_tac2_shapiro$c_promedio[nac_tac2_shapiro$Tiempo == i]
+    nac_tac2_shapiro_tiempo <- c(nac_tac2_shapiro_tiempo, scale(nac_vector))
+  
+}
+#density plot
+plot(density(nac_tac2_shapiro_tiempo), main = "nac_tac2_shapiro")
+#histogram
+hist(nac_tac2_shapiro_tiempo, main = "nac_tac2_shapiro")
+#shapiro test
+shapiro.test(nac_tac2_shapiro_tiempo)
+
