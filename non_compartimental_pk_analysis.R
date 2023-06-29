@@ -31,6 +31,7 @@ dfo <- tibble(read.csv("output/covariables_dfo.csv", header = TRUE, sep = ",")[,
 asc_nca <- tibble(
   px = c("p01", "p03", "p05", "p06", "p08", "p09", "p10", "p11", "p14",
           "p15", "p17", "p18"),
+  tac = c("tac1","tac1","tac1","tac1","tac1","tac1","tac2","tac2","tac2","tac2","tac2","tac2"),
   auc = c(0))
 
 # group by patient (px), then calculate auc by patient
@@ -49,7 +50,7 @@ for (paciente in unique(asc$px)) {
   # filter by patient
   asc_px <- filter(asc, px == paciente)
   # calculate k
-  asc_nca$k[asc_nca$px == paciente] <- lm(formula = log(asc_px$c_promedio[asc_px$Tiempo >= 90]) ~ asc_px$Tiempo[asc_px$Tiempo >= 90])$coefficients[2] 
+  asc_nca$k[asc_nca$px == paciente] <- -lm(formula = log(asc_px$c_promedio[asc_px$Tiempo >= 90]) ~ asc_px$Tiempo[asc_px$Tiempo >= 90])$coefficients[2] 
 }
 # convert k in micromol/L/min to mmol/L/h
 asc_nca <- mutate(asc_nca, k = k * 60 / 1000)
@@ -62,15 +63,52 @@ for (paciente in unique(asc$px)) {
   # filter by patient
   asc_px <- filter(asc, px == paciente)
   # calculate t1/2
-  asc_nca$t12[asc_nca$px == paciente] <- -log(2) / asc_nca$k[asc_nca$px == paciente]
+  asc_nca$t12[asc_nca$px == paciente] <- log(2) / asc_nca$k[asc_nca$px == paciente]
 }
 # shapiro test for normality
 shapiro.test(asc_nca$t12)
 
-# calculate clearance (Cl) for each patient
+# dosis total en mg tac1
+# AA 2475 NAC 2000 DFO 1000
+# 2475/176.12 = 14.05 asc
+# 2000/163.2 = 12.25 nac
+# 1000/560.6 = 1.78 dfo
+# dosis total en mg tac2
+# AA 2250 NAC 4000 DFO 1600
+# 2250/176.12 = 12.77 asc
+# 4000/163.2 = 24.51 nac
+# 1600/560.6 = 2.85 dfo
 
+# add dosis total to asc_nca
+asc_nca <- mutate(asc_nca, dosis_total = 0)
+for (i in asc_nca$px) {
+  if (i == "p01" | i == "p03" | i == "p05" | i == "p06" | i == "p08" | i == "p09") {
+    asc_nca$dosis_total[asc_nca$px == i] <- 14.05
+  } else {
+    asc_nca$dosis_total[asc_nca$px == i] <- 12.77
+  }
+}
 
-# calculate 
+# calculate Clearance (Cl) for each patient
+asc_nca <- mutate(asc_nca, Cl = 0)
+for (paciente in unique(asc$px)) {
+  # filter by patient
+  asc_px <- filter(asc, px == paciente)
+  # calculate Cl
+  asc_nca$Cl[asc_nca$px == paciente] <- asc_nca$dosis_total[asc_nca$px == paciente] / asc_nca$auc[asc_nca$px == paciente]
+}
+shapiro.test(asc_nca$Cl)
+# calculate Volume of distribution (V) for each patient
+asc_nca <- mutate(asc_nca, V = 0)
+for (paciente in unique(asc$px)) {
+  # filter by patient
+  asc_px <- filter(asc, px == paciente)
+  # calculate V
+  asc_nca$V[asc_nca$px == paciente] <- asc_nca$Cl[asc_nca$px == paciente] / asc_nca$k[asc_nca$px == paciente]
+}
+shapiro.test(asc_nca$V)
+summary(asc_nca)
+
 
 # Cálculo velocidad infusión: 
 # [mg/ml] * $ml/min$ * 60min/h / 176.12g/mol  / 1000
