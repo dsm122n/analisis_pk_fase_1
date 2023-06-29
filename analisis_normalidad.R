@@ -376,6 +376,7 @@ for (i in c(
 # join tac1 and tac2
 asc_shapiro_tiempo <- c(asc_shapiro_tiempo, asc_shapiro_tiempo2)
 (p_value <- shapiro.test(asc_shapiro_tiempo)$p.value)
+(p_value_asc_tac12 <- shapiro.test(asc_shapiro_tiempo)$p.value)
 #density plot
 plot(density(asc_shapiro_tiempo), main = "asc density plot standarized_data (tac1 and tac2)")
 # add shapiro_wilk p-value to plot
@@ -420,6 +421,7 @@ for (i in c(
 # join tac1 and tac2
 dfo_shapiro_tiempo <- c(dfo_shapiro_tiempo, dfo_shapiro_tiempo2)
 (p_value <- shapiro.test(dfo_shapiro_tiempo)$p.value)
+(p_value_dfo_tac12 <- shapiro.test(dfo_shapiro_tiempo)$p.value)
 #density plot
 plot(density(dfo_shapiro_tiempo), main = "dfo density plot standarized_data (tac1 and tac2)")
 # add shapiro_wilk p-value to plot
@@ -463,6 +465,7 @@ for (i in c(
 # join tac1 and tac2
 nac_shapiro_tiempo <- c(nac_shapiro_tiempo, nac_shapiro_tiempo2)
 p_value <- shapiro.test(nac_shapiro_tiempo)$p.value
+p_value_nac_tac12 <- shapiro.test(nac_shapiro_tiempo)$p.value
 #density plot
 plot(density(nac_shapiro_tiempo), main = "nac density plot standarized_data (tac1 and tac2)")
 # add shapiro_wilk p-value to plot
@@ -479,6 +482,13 @@ text(-1, -1.25, "normal distribution", pos = 4, col = "#000c7b")
 
 # finish pdf and save in working directory
 dev.off()
+
+# p-value table
+p_value_table_tac12 <- data.frame(
+  tac = c("asc", "dfo", "nac"),
+  p_value = c(p_value_asc_tac12, p_value_dfo_tac12, p_value_nac_tac12)
+)
+
 ########################################################################
 ########################################################################
 ########################################################################
@@ -664,17 +674,15 @@ text(-1, -1.25, "normal distribution", pos = 4, col = "#000000")
 
 # finish pdf and save in working directory
 # table with p-values tac1 and tac2 for each treatment for asc, dfo and nac
+
+dev.off()
+# install gridExtra package to save table in pdf
+
+
 (p_value_table <- data.frame(
   row.names = c("asc", "dfo", "nac"),
   tac1 = c(p_value_tac1_asc, p_value_tac1_dfo, p_value_tac1_nac),
   tac2 = c(p_value_tac2_asc, p_value_tac2_dfo, p_value_tac2_nac)
 ))
-# add p-value table to new page in pdf
-
-library(gridExtra)
-grid.table(p_value_table)
-
-dev.off()
-# install gridExtra package to save table in pdf
-install.packages("gridExtra")
-
+p_value_table
+p_value_table_tac12
